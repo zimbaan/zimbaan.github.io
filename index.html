@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#050506" />
+    <title>Kapil Adhithya N | AI/ML Engineer</title>
+    <meta
+      name="description"
+      content="Kapil Adhithya N is an AI/ML engineer building LLM and RAG applications, machine learning models, and REST APIs in Python, LangChain, PyTorch, and FastAPI."
+    />
+    <meta name="author" content="Kapil Adhithya N" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <link rel="canonical" href="https://zimbaan.github.io/" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://zimbaan.github.io/" />
+    <meta property="og:title" content="Kapil Adhithya N | AI/ML Engineer" />
+    <meta property="og:description" content="I build LLM-powered systems that let people talk to their data." />
+    <meta property="og:image" content="https://zimbaan.github.io/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kapil Adhithya N | AI/ML Engineer" />
+    <meta name="twitter:description" content="I build LLM-powered systems that let people talk to their data." />
+    <meta name="twitter:image" content="https://zimbaan.github.io/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Kapil Adhithya N",
+        "jobTitle": "AI/ML Engineer",
+        "url": "https://zimbaan.github.io/",
+        "email": "mailto:kapiladhithya@gmail.com",
+        "alumniOf": { "@type": "CollegeOrUniversity", "name": "Kumaraguru College of Technology" },
+        "worksFor": { "@type": "Organization", "name": "Turing AI" },
+        "knowsAbout": ["Machine Learning", "Large Language Models", "Retrieval-Augmented Generation", "LangChain", "PyTorch", "FastAPI"],
+        "sameAs": ["https://github.com/zimbaan", "https://www.linkedin.com/in/kapil-adhithya-6a7324236"]
+      }
+    </script>
+    <!-- Static first frame of the preloader so something paints before the JS bundle runs.
+         React's <Preloader> renders the same layout and removes this on mount. -->
+    <style>
+      #boot { position: fixed; inset: 0; z-index: 110; display: flex; flex-direction: column; justify-content: space-between;
+        background: #050506; color: #8b8b96; padding: 1.5rem; font: 14px/1.5 "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace; }
+      #boot .count { font-family: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif; font-weight: 600; color: #ededf0;
+        font-size: clamp(4rem, 16vw, 11rem); line-height: 1; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; margin: 0; }
+      #boot .count span { color: #7c5cff; }
+      #boot .row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
+      #boot p { margin: 0; }
+      #boot .hint { font-size: 12px; line-height: 1rem; }
+      @media (min-width: 640px) { #boot { padding: 2.5rem; } }
+    </style>
+    <noscript><style>#boot { display: none; }</style></noscript>
+  </head>
+  <body>
+    <noscript>
+      <p style="padding:2rem;font-family:sans-serif;color:#ededf0;background:#050506">
+        Kapil Adhithya N, AI/ML Engineer. Email: kapiladhithya@gmail.com
+      </p>
+    </noscript>
+    <div id="boot" aria-hidden="true">
+      <p>&gt; loading model weights...</p>
+      <div class="row">
+        <p class="hint">Click anywhere to skip</p>
+        <p class="count">0<span>%</span></p>
+      </div>
+    </div>
+    <script>
+      // Repeat visits and reduced-motion users skip the preloader, so drop the boot frame right away.
+      try {
+        if (sessionStorage.getItem("kapil:booted") || matchMedia("(prefers-reduced-motion: reduce)").matches)
+          document.getElementById("boot").remove();
+      } catch (e) {}
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
