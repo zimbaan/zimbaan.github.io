@@ -1,106 +1,96 @@
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { portrait, profile } from "../../data/resume";
-import { ease } from "../../lib/motion";
 
-/** Corner brackets around the face, styled like an object-detection overlay. */
-function DetectionBox({ show }: { show: boolean }) {
-  const corner = "absolute size-5 border-accent-2";
-  return (
-    <motion.div
-      aria-hidden="true"
-      className="pointer-events-none absolute top-[10.5%] left-[27%] h-[41.5%] w-[45%]"
-      initial={{ opacity: 0, scale: 1.12 }}
-      animate={show ? { opacity: 1, scale: 1 } : undefined}
-      transition={{ duration: 0.9, ease, delay: 0.6 }}
-    >
-      <span className={`${corner} top-0 left-0 rounded-tl-md border-t-2 border-l-2`} />
-      <span className={`${corner} top-0 right-0 rounded-tr-md border-t-2 border-r-2`} />
-      <span className={`${corner} bottom-0 left-0 rounded-bl-md border-b-2 border-l-2`} />
-      <span className={`${corner} right-0 bottom-0 rounded-br-md border-r-2 border-b-2`} />
-      <span className="absolute -top-7 left-0 rounded-md border border-accent-2/30 bg-bg/70 px-2 py-0.5 font-mono text-[10px] text-accent-2">
-        kapil · 0.99
-      </span>
-    </motion.div>
-  );
-}
+// The cutout is taller than it is wide (≈ 0.91:1), so on a square card the head rises ~10% above the
+// top edge. The image box shares the card's sides and bottom, so clipping just rounds those corners.
+const CLIP = "inset(0 round 0 0 1.75rem 1.75rem)";
+// Fade the suit out at the bottom and where the original photo cut the arms at the sides.
+const FADE =
+  "linear-gradient(to bottom, #000 62%, transparent 97%), linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%)";
 
 /**
- * Colour-graded portrait: blurred 20px preview while loading (so slow connections never
- * show an empty box), a gentle scroll parallax, and a one-time "scan" when it first appears.
+ * Background-removed portrait on a lit studio-style backdrop. A blurred silhouette shows
+ * while the photo loads, so slow connections never see an empty card.
  */
 export function Portrait() {
-  const frame = useRef<HTMLDivElement>(null);
   const img = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
-  const reduced = useReducedMotion();
-  const inView = useInView(frame, { once: true, margin: "0px 0px -20% 0px" });
-  const { scrollYProgress } = useScroll({ target: frame, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], reduced ? ["0%", "0%"] : ["-4%", "4%"]);
 
   // A cached image can finish loading before React attaches onLoad.
   useEffect(() => {
     if (img.current?.complete && img.current.naturalWidth) setLoaded(true);
   }, []);
 
-  const reveal = inView && loaded;
+  const imageStyle = {
+    clipPath: CLIP,
+    WebkitMaskImage: FADE,
+    maskImage: FADE,
+    WebkitMaskComposite: "source-in",
+    maskComposite: "intersect",
+  } as const;
 
   return (
-    <figure className="relative mx-auto w-full max-w-[26rem] lg:max-w-none">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -inset-10 -z-10 bg-[radial-gradient(closest-side,rgb(124_92_255/0.22),transparent)]"
-      />
-      <div
-        ref={frame}
-        className="group relative isolate aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-line bg-surface"
-      >
+    <figure className="group relative mx-auto w-full max-w-[26rem] pt-[11%] lg:max-w-none">
+      <div className="relative aspect-square">
+        {/* Backdrop */}
         <div
           aria-hidden="true"
-          className={`absolute inset-0 scale-110 bg-cover bg-center blur-xl transition-opacity duration-700 ${
+          className="absolute inset-0 overflow-hidden rounded-[1.75rem] border border-line bg-surface"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_34%,rgb(124_92_255/0.5),transparent_62%),radial-gradient(circle_at_88%_92%,rgb(34_211_238/0.16),transparent_48%)]" />
+          <div className="bg-grid absolute inset-0 opacity-60 [mask-image:radial-gradient(circle_at_50%_40%,#000,transparent_70%)]" />
+          {/* Orbit rings centred behind the head */}
+          {[56, 82, 108].map((size) => (
+            <div
+              key={size}
+              className="absolute top-[30%] left-1/2 aspect-square -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.07]"
+              style={{ width: `${size}%` }}
+            />
+          ))}
+          <div className="absolute top-[30%] left-1/2 aspect-square w-[82%] -translate-x-1/2 -translate-y-1/2 animate-[spin_24s_linear_infinite] motion-reduce:animate-none">
+            <span className="absolute top-0 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-2 shadow-[0_0_12px_3px_rgb(34_211_238/0.6)]" />
+          </div>
+        </div>
+
+        {/* Blurred silhouette while loading */}
+        <div
+          aria-hidden="true"
+          className={`absolute inset-x-0 bottom-0 bg-cover bg-bottom blur-lg transition-opacity duration-700 ${
             loaded ? "opacity-0" : "opacity-100"
           }`}
-          style={{ backgroundImage: `url(${portrait.placeholder})` }}
+          style={{
+            aspectRatio: `${portrait.width} / ${portrait.height}`,
+            backgroundImage: `url(${portrait.placeholder})`,
+            ...imageStyle,
+          }}
         />
 
-        {/* Taller than the frame so the parallax never reveals an edge. */}
-        <motion.div style={{ y }} className="absolute inset-x-0 -top-[5%] -bottom-[5%]">
-          <picture>
-            <source
-              type="image/webp"
-              srcSet={portrait.webp}
-              sizes="(min-width: 1024px) 36vw, (min-width: 640px) 26rem, 92vw"
-            />
-            <img
-              ref={img}
-              src={portrait.jpg}
-              alt={portrait.alt}
-              width={portrait.width}
-              height={portrait.height}
-              loading="lazy"
-              decoding="async"
-              onLoad={() => setLoaded(true)}
-              className={`size-full object-cover transition-[opacity,scale] duration-[1200ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] ${
-                loaded ? "scale-100 opacity-100" : "scale-[1.06] opacity-0"
-              }`}
-            />
-          </picture>
-          <DetectionBox show={reveal} />
-        </motion.div>
+        <img
+          ref={img}
+          src={portrait.src}
+          srcSet={portrait.srcSet}
+          sizes="(min-width: 1024px) 36vw, (min-width: 640px) 26rem, 92vw"
+          alt={portrait.alt}
+          width={portrait.width}
+          height={portrait.height}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          style={imageStyle}
+          className={`absolute inset-x-0 bottom-0 h-auto w-full origin-bottom transition-[opacity,translate,scale] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:scale-[1.015] ${
+            loaded ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+          }`}
+        />
 
-        {reveal && !reduced && (
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 h-24 bg-gradient-to-b from-transparent via-accent-2/15 to-transparent"
-            initial={{ top: "-25%" }}
-            animate={{ top: "110%" }}
-            transition={{ duration: 1.6, ease: "easeInOut", delay: 0.2 }}
-          />
-        )}
-
-        <figcaption className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-          <p className="font-display text-xl font-semibold tracking-tight">{profile.name}</p>
-          <p className="mt-0.5 font-mono text-[11px] text-muted">AI/ML Engineer · LLM &amp; RAG</p>
+        <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6">
+          <div>
+            <p className="font-display text-xl font-semibold tracking-tight">{profile.name}</p>
+            <p className="mt-0.5 font-mono text-[11px] text-fg/60">AI/ML Engineer · LLM &amp; RAG</p>
+          </div>
+          <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-bg/70 px-2.5 py-1 font-mono text-[10px] text-fg/70">
+            <span className="size-1.5 rounded-full bg-ok" aria-hidden="true" />
+            Turing AI
+          </span>
         </figcaption>
       </div>
     </figure>
