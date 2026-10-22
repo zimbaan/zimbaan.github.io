@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 
-/** Returns the id of the section currently crossing the middle of the viewport. */
+/**
+ * Returns the id of the section currently crossing the middle of the viewport.
+ * Sections may mount later (they are lazy-loaded), so it keeps watching until all are found.
+ */
 export function useActiveSection(ids: readonly string[]) {
   const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    const observed = new Set<string>();
+    const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) setActive(entry.target.id);
@@ -13,9 +17,23 @@ export function useActiveSection(ids: readonly string[]) {
       },
       { rootMargin: "-45% 0px -50% 0px" },
     );
-    const els = ids.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    const attach = () => {
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && !observed.has(id)) {
+          io.observe(el);
+          observed.add(id);
+        }
+      }
+      if (observed.size === ids.length) mo.disconnect();
+    };
+    const mo = new MutationObserver(attach);
+    mo.observe(document.getElementById("main") ?? document.body, { childList: true, subtree: true });
+    attach();
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+    };
   }, [ids]);
 
   return active;

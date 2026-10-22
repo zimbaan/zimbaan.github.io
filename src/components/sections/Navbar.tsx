@@ -58,7 +58,7 @@ export function Navbar({ onOpenPalette }: { onOpenPalette: () => void }) {
           <nav
             aria-label="Primary"
             className={`flex h-14 items-center justify-between rounded-full border pr-2 pl-5 transition-[background-color,border-color] duration-500 ${
-              scrolled || menuOpen ? "border-line bg-bg/65 backdrop-blur-xl" : "border-transparent bg-transparent"
+              scrolled || menuOpen ? "border-line bg-bg/80 backdrop-blur-md" : "border-transparent bg-transparent"
             }`}
           >
             <a
@@ -132,7 +132,7 @@ export function Navbar({ onOpenPalette }: { onOpenPalette: () => void }) {
         {menuOpen && (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-0 z-40 flex flex-col justify-between bg-bg/95 px-6 pt-28 pb-10 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-40 flex flex-col justify-between bg-bg/[0.98] px-6 pt-28 pb-10 md:hidden"
             initial={{ clipPath: "circle(0% at 100% 0%)" }}
             animate={{ clipPath: "circle(150% at 100% 0%)" }}
             exit={{ clipPath: "circle(0% at 100% 0%)" }}

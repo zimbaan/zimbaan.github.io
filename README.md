@@ -22,6 +22,8 @@ Every word on the site comes from **`src/data/resume.ts`**: profile links, summa
 - **Skills → evidence.** Each skill has a `usedIn` list (`"turing" | "iqube" | "nlsql" | "debugger"`). That powers the "Where I used it" panel in the Skills section. Leave it empty for skills not tied to a listed role or project.
 - **Projects.** `repo: null` hides the Source button. `flow` is the step list shown in the case-study modal.
 - **Resume PDF.** Replace `public/resume.pdf` with the latest copy.
+- **Photo.** `public/images/kapil-{480,800,1100}.webp` plus `kapil-800.jpg` (fallback), all cropped to 4:5 and colour-graded to match the theme. `portrait.placeholder` in `resume.ts` is a tiny blurred preview shown while the photo loads. To swap the photo, replace those files with the same names and sizes.
+- **About text.** `summary` in `resume.ts` is a list of paragraphs; wrap a phrase in `**double asterisks**` to highlight it.
 
 ## Things to fill in (TODO)
 
@@ -54,7 +56,7 @@ Every push to `main` builds and deploys automatically via `.github/workflows/dep
 
 | Preset | Performance | Accessibility | Best Practices | SEO |
 | --- | --- | --- | --- | --- |
-| Mobile | 92 | 100 | 100 | 100 |
+| Mobile | 94 | 100 | 100 | 100 |
 | Desktop | 99 | 100 | 100 | 100 |
 
 Scores vary a little between runs and will differ once hosted (CDN, compression, HTTP/2).
@@ -74,6 +76,9 @@ Scores vary a little between runs and will differ once hosted (CDN, compression,
 - The hero network loads after first paint. Desktops get the WebGL version (three.js, ~244 kB gzipped, lazy-loaded). Phones and machines with 4 or fewer CPU cores get a dependency-free 2D canvas version (~2 kB) with the same look. Both cap pixel ratio at 1.5 and stop rendering when scrolled out of view.
 - `index.html` contains a static first frame of the preloader, so something paints before the JavaScript has loaded.
 - GSAP (used for the Experience timeline) is loaded on demand, outside the main bundle.
+- Everything below the hero is a separate chunk (`BelowFold`), so the first screen needs less JavaScript.
+- On Data Saver or a 2G/3G connection, the hero uses the 2D canvas instead of WebGL, even on desktop.
+- A small service worker (`public/sw.js`, production only) caches the build, so repeat visits load instantly and still work offline. Bump `CACHE` in it if you ever need to force-clear old caches.
 - With **reduced motion** turned on in the OS, the preloader, smooth scrolling, custom cursor and scroll animations are switched off, and the 3D scene renders as a still frame.
 - The preloader shows once per browser session; click or press any key to skip it.
 - The project demos are scripted and run entirely in the browser. They're labelled "Simulated demo" and use sample data.

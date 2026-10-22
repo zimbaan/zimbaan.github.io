@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { MotionConfig } from "motion/react";
 import { useSmoothScroll } from "./hooks/useSmoothScroll";
 import { ToastProvider } from "./components/ui/Toast";
@@ -9,13 +9,9 @@ import { CommandPalette } from "./components/ui/CommandPalette";
 import { Preloader } from "./components/sections/Preloader";
 import { Navbar } from "./components/sections/Navbar";
 import { Hero } from "./components/sections/Hero";
-import { About } from "./components/sections/About";
-import { Skills } from "./components/sections/Skills";
-import { Experience } from "./components/sections/Experience";
-import { Projects } from "./components/sections/Projects";
-import { Education } from "./components/sections/Education";
-import { Contact } from "./components/sections/Contact";
 import { Footer } from "./components/sections/Footer";
+
+const BelowFold = lazy(() => import("./components/sections/BelowFold"));
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -34,12 +30,10 @@ export default function App() {
         <Navbar onOpenPalette={openPalette} />
         <main id="main">
           <Hero ready={ready} />
-          <About />
-          <Skills />
-          <Experience />
-          <Projects />
-          <Education />
-          <Contact />
+          {/* Placeholder height keeps the footer below the fold while the chunk loads. */}
+          <Suspense fallback={<div className="min-h-[100svh]" />}>
+            <BelowFold />
+          </Suspense>
         </main>
         <Footer />
         <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />

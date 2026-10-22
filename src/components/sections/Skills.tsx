@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { ArrowUpRight, MousePointerClick } from "lucide-react";
 import {
@@ -177,6 +177,178 @@ function computeLayout() {
 
 /* ----------------------------- Graph ----------------------------- */
 
+type NodeState = "active" | "related" | "cat" | "dim" | "idle";
+
+const PILL_FILL: Record<NodeState, string> = {
+  active: "#7c5cff",
+  related: "rgb(34 211 238 / 0.12)",
+  cat: "rgb(124 92 255 / 0.12)",
+  dim: "#0c0c0f",
+  idle: "#0c0c0f",
+};
+const PILL_STROKE: Record<NodeState, string> = {
+  active: "#7c5cff",
+  related: "rgb(34 211 238 / 0.6)",
+  cat: "rgb(124 92 255 / 0.5)",
+  dim: "rgb(255 255 255 / 0.1)",
+  idle: "rgb(255 255 255 / 0.1)",
+};
+const PILL_TEXT: Record<NodeState, string> = {
+  active: "#fff",
+  related: "#ededf0",
+  cat: "#ededf0",
+  dim: "#a1a1aa",
+  idle: "#a1a1aa",
+};
+
+// Hover changes are colour/opacity only, done with CSS transitions; Motion handles just the
+// one-off entrance. Each node is memoised so a hover re-renders only the nodes whose state changed.
+
+const SkillLink = memo(function SkillLink({
+  from,
+  to,
+  state,
+  shown,
+  delay,
+}: {
+  from: GNode;
+  to: GNode;
+  state: NodeState;
+  shown: boolean;
+  delay: number;
+}) {
+  const lit = state === "active" || state === "cat";
+  return (
+    <line
+      x1={from.x}
+      y1={from.y}
+      x2={to.x}
+      y2={to.y}
+      stroke={lit ? "rgb(124 92 255 / 0.7)" : "rgb(255 255 255 / 0.1)"}
+      style={{
+        opacity: shown ? (state === "dim" ? 0.4 : 1) : 0,
+        transition: `stroke .3s, opacity .6s ${delay}s`,
+      }}
+    />
+  );
+});
+
+const SkillPill = memo(function SkillPill({
+  n,
+  state,
+  selected,
+  shown,
+  delay,
+  onHover,
+  onSelect,
+}: {
+  n: GNode;
+  state: NodeState;
+  selected: boolean;
+  shown: boolean;
+  delay: number;
+  onHover: (key: string | null) => void;
+  onSelect: (key: string) => void;
+}) {
+  const skill = byKey.get(n.id)!;
+  return (
+    <g
+      transform={`translate(${n.x} ${n.y})`}
+      role="button"
+      tabIndex={0}
+      aria-pressed={selected}
+      aria-label={`${skill.name}. ${
+        skill.usedIn.length ? `Used in ${skill.usedIn.map((e) => evidenceLabels[e].title).join(", ")}` : "In my toolkit"
+      }`}
+      onPointerEnter={() => onHover(n.id)}
+      onPointerLeave={() => onHover(null)}
+      onFocus={() => onHover(n.id)}
+      onBlur={() => onHover(null)}
+      onClick={() => onSelect(n.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect(n.id);
+        }
+      }}
+      className="outline-none [&:focus-visible>g>rect]:stroke-accent-2"
+      style={{ opacity: state === "dim" ? 0.28 : 1, transition: "opacity .3s" }}
+    >
+      <motion.g
+        initial={{ scale: 0.4, opacity: 0 }}
+        animate={shown ? { scale: state === "active" ? 1.08 : 1, opacity: 1 } : undefined}
+        transition={{ duration: 0.6, ease, delay }}
+      >
+        <rect
+          x={-n.w / 2}
+          y={-n.h / 2}
+          width={n.w}
+          height={n.h}
+          rx={n.h / 2}
+          fill={PILL_FILL[state]}
+          stroke={PILL_STROKE[state]}
+          style={{ transition: "fill .3s, stroke .3s" }}
+        />
+        <text
+          textAnchor="middle"
+          dy="0.35em"
+          fill={PILL_TEXT[state]}
+          className="font-sans text-[13.5px]"
+          style={{ transition: "fill .3s" }}
+        >
+          {n.label}
+        </text>
+      </motion.g>
+    </g>
+  );
+});
+
+const HubPill = memo(function HubPill({
+  n,
+  state,
+  shown,
+  onHoverCat,
+}: {
+  n: GNode;
+  state: NodeState;
+  shown: boolean;
+  onHoverCat: (id: string | null) => void;
+}) {
+  const on = state === "cat" || state === "active";
+  return (
+    <g
+      transform={`translate(${n.x} ${n.y})`}
+      onPointerEnter={() => onHoverCat(n.id)}
+      onPointerLeave={() => onHoverCat(null)}
+      style={{ opacity: state === "dim" ? 0.35 : 1, transition: "opacity .3s" }}
+    >
+      <motion.g
+        initial={{ scale: 0, opacity: 0 }}
+        animate={shown ? { scale: 1, opacity: 1 } : undefined}
+        transition={{ duration: 0.7, ease, delay: 0.15 }}
+      >
+        <rect
+          x={-n.w / 2}
+          y={-n.h / 2}
+          width={n.w}
+          height={n.h}
+          rx={n.h / 2}
+          fill={on ? "rgb(124 92 255 / 0.22)" : "#141419"}
+          stroke={on ? "#7c5cff" : "rgb(124 92 255 / 0.45)"}
+          style={{ transition: "fill .3s, stroke .3s" }}
+        />
+        <text
+          textAnchor="middle"
+          dy="0.35em"
+          className="fill-fg font-mono text-[13px] font-medium tracking-wider uppercase"
+        >
+          {n.label}
+        </text>
+      </motion.g>
+    </g>
+  );
+});
+
 type GraphProps = {
   active: SkillRef | null;
   activeCat: string | null;
@@ -190,10 +362,20 @@ type GraphProps = {
 function SkillGraph({ active, activeCat, related, selected, onHover, onSelect, onHoverCat }: GraphProps) {
   const layout = useMemo(computeLayout, []);
   const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView(ref, { once: true, margin: "0px 0px -15% 0px" });
+  const shown = useInView(ref, { once: true, margin: "0px 0px -15% 0px" });
   const pos = useMemo(() => new Map(layout.nodes.map((n) => [n.id, n])), [layout]);
 
-  const stateOf = (n: GNode): "active" | "related" | "cat" | "dim" | "idle" => {
+  // Staggered entrance delays apply only to the first reveal; afterwards state changes are instant.
+  const [introDone, setIntroDone] = useState(false);
+  useEffect(() => {
+    if (!shown) return;
+    const t = window.setTimeout(() => setIntroDone(true), 1600);
+    return () => window.clearTimeout(t);
+  }, [shown]);
+  const delayFor = (n: GNode) =>
+    introDone ? 0 : 0.2 + Math.hypot(n.x! - layout.center.x, n.y! - layout.center.y) / 900;
+
+  const stateOf = (n: GNode): NodeState => {
     if (active) {
       if (n.id === active.key) return "active";
       if (related.has(n.id)) return "related";
@@ -204,7 +386,7 @@ function SkillGraph({ active, activeCat, related, selected, onHover, onSelect, o
     return "idle";
   };
 
-  const delayFor = (n: GNode) => Math.hypot(n.x! - layout.center.x, n.y! - layout.center.y) / 900;
+  const center = layout.nodes[0];
 
   return (
     <svg
@@ -234,7 +416,7 @@ function SkillGraph({ active, activeCat, related, selected, onHover, onSelect, o
             stroke="rgb(255 255 255 / 0.14)"
             strokeDasharray="3 5"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={inView ? { pathLength: 1, opacity: 1 } : {}}
+            animate={shown ? { pathLength: 1, opacity: 1 } : undefined}
             transition={{ duration: 1, ease, delay: 0.1 }}
           />
         ))}
@@ -242,25 +424,16 @@ function SkillGraph({ active, activeCat, related, selected, onHover, onSelect, o
       {/* Hub → skill links */}
       {layout.nodes
         .filter((n) => n.kind === "skill")
-        .map((n) => {
-          const hub = pos.get(n.catId)!;
-          const s = stateOf(n);
-          const lit = s === "active" || s === "cat" || (activeCat === n.catId && !active);
-          return (
-            <motion.line
-              key={`link-${n.id}`}
-              x1={hub.x}
-              y1={hub.y}
-              x2={n.x}
-              y2={n.y}
-              stroke={lit ? "rgb(124 92 255 / 0.7)" : "rgb(255 255 255 / 0.1)"}
-              style={{ transition: "stroke .3s" }}
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: s === "dim" ? 0.4 : 1 } : {}}
-              transition={{ duration: 0.6, delay: inView && !active && !activeCat ? 0.3 + delayFor(n) : 0 }}
-            />
-          );
-        })}
+        .map((n) => (
+          <SkillLink
+            key={`link-${n.id}`}
+            from={pos.get(n.catId)!}
+            to={n}
+            state={stateOf(n)}
+            shown={shown}
+            delay={introDone ? 0 : 0.1 + delayFor(n)}
+          />
+        ))}
 
       {/* Active skill → related skills (shared projects) */}
       {active &&
@@ -278,143 +451,42 @@ function SkillGraph({ active, activeCat, related, selected, onHover, onSelect, o
               strokeWidth={1.2}
               initial={{ pathLength: 0, opacity: 0 }}
               animate={{ pathLength: 1, opacity: 0.6 }}
-              transition={{ duration: 0.5, ease }}
+              transition={{ duration: 0.45, ease }}
             />
           );
         })}
 
-      {/* Nodes */}
-      {layout.nodes.map((n) => {
-        const s = stateOf(n);
-        const delay = 0.2 + delayFor(n);
+      {/* Center */}
+      <g transform={`translate(${center.x} ${center.y})`} aria-hidden="true">
+        <motion.g
+          initial={{ scale: 0, opacity: 0 }}
+          animate={shown ? { scale: 1, opacity: 1 } : undefined}
+          transition={{ duration: 0.8, ease }}
+        >
+          <circle r={60} fill="url(#rel-grad)" opacity={0.12} />
+          <circle r={44} fill="#0c0c0f" stroke="url(#rel-grad)" strokeWidth={1.5} />
+          <text textAnchor="middle" dy="0.35em" className="fill-fg font-display text-[17px] font-semibold">
+            {center.label}
+          </text>
+        </motion.g>
+      </g>
 
-        if (n.kind === "center") {
-          return (
-            <g key={n.id} transform={`translate(${n.x} ${n.y})`} aria-hidden="true">
-              <motion.g
-                initial={{ scale: 0, opacity: 0 }}
-                animate={inView ? { scale: 1, opacity: 1 } : {}}
-                transition={{ duration: 0.8, ease }}
-              >
-                <circle r={60} fill="url(#rel-grad)" opacity={0.12} className="animate-pulse" />
-                <circle r={44} fill="#0c0c0f" stroke="url(#rel-grad)" strokeWidth={1.5} />
-                <text textAnchor="middle" dy="0.35em" className="fill-fg font-display text-[17px] font-semibold">
-                  {n.label}
-                </text>
-              </motion.g>
-            </g>
-          );
-        }
-
-        if (n.kind === "hub") {
-          const on = s === "cat" || s === "active";
-          return (
-            <g
-              key={n.id}
-              transform={`translate(${n.x} ${n.y})`}
-              onPointerEnter={() => onHoverCat(n.id)}
-              onPointerLeave={() => onHoverCat(null)}
-              style={{ opacity: s === "dim" ? 0.35 : 1, transition: "opacity .3s" }}
-            >
-              <motion.g
-                initial={{ scale: 0, opacity: 0 }}
-                animate={inView ? { scale: 1, opacity: 1 } : {}}
-                transition={{ duration: 0.7, ease, delay: 0.15 }}
-              >
-                <rect
-                  x={-n.w / 2}
-                  y={-n.h / 2}
-                  width={n.w}
-                  height={n.h}
-                  rx={n.h / 2}
-                  fill={on ? "rgb(124 92 255 / 0.22)" : "#141419"}
-                  stroke={on ? "#7c5cff" : "rgb(124 92 255 / 0.45)"}
-                  style={{ transition: "fill .3s, stroke .3s" }}
-                />
-                <text
-                  textAnchor="middle"
-                  dy="0.35em"
-                  className="fill-fg font-mono text-[13px] font-medium tracking-wider uppercase"
-                >
-                  {n.label}
-                </text>
-              </motion.g>
-            </g>
-          );
-        }
-
-        const skill = byKey.get(n.id)!;
-        const fill =
-          s === "active"
-            ? "#7c5cff"
-            : s === "related"
-              ? "rgb(34 211 238 / 0.12)"
-              : s === "cat"
-                ? "rgb(124 92 255 / 0.12)"
-                : "#0c0c0f";
-        const stroke =
-          s === "active"
-            ? "#7c5cff"
-            : s === "related"
-              ? "rgb(34 211 238 / 0.6)"
-              : s === "cat"
-                ? "rgb(124 92 255 / 0.5)"
-                : "rgb(255 255 255 / 0.1)";
-        const textFill = s === "active" ? "#fff" : s === "idle" || s === "dim" ? "#a1a1aa" : "#ededf0";
-        return (
-          <g
+      {layout.nodes.map((n) =>
+        n.kind === "hub" ? (
+          <HubPill key={n.id} n={n} state={stateOf(n)} shown={shown} onHoverCat={onHoverCat} />
+        ) : n.kind === "skill" ? (
+          <SkillPill
             key={n.id}
-            transform={`translate(${n.x} ${n.y})`}
-            role="button"
-            tabIndex={0}
-            aria-pressed={selected === n.id}
-            aria-label={`${skill.name}. ${
-              skill.usedIn.length
-                ? `Used in ${skill.usedIn.map((e) => evidenceLabels[e].title).join(", ")}`
-                : "In my toolkit"
-            }`}
-            onPointerEnter={() => onHover(n.id)}
-            onPointerLeave={() => onHover(null)}
-            onFocus={() => onHover(n.id)}
-            onBlur={() => onHover(null)}
-            onClick={() => onSelect(n.id)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                onSelect(n.id);
-              }
-            }}
-            className="outline-none [&:focus-visible>g>rect]:stroke-accent-2"
-            style={{ opacity: s === "dim" ? 0.28 : 1, transition: "opacity .3s" }}
-          >
-            <motion.g
-              initial={{ scale: 0.4, opacity: 0 }}
-              animate={inView ? { scale: s === "active" ? 1.08 : 1, opacity: 1 } : {}}
-              transition={{ duration: 0.6, ease, delay: inView && !active && !activeCat ? delay : 0 }}
-            >
-              <rect
-                x={-n.w / 2}
-                y={-n.h / 2}
-                width={n.w}
-                height={n.h}
-                rx={n.h / 2}
-                fill={fill}
-                stroke={stroke}
-                style={{ transition: "fill .3s, stroke .3s" }}
-              />
-              <text
-                textAnchor="middle"
-                dy="0.35em"
-                fill={textFill}
-                className="font-sans text-[13.5px]"
-                style={{ transition: "fill .3s" }}
-              >
-                {n.label}
-              </text>
-            </motion.g>
-          </g>
-        );
-      })}
+            n={n}
+            state={stateOf(n)}
+            selected={selected === n.id}
+            shown={shown}
+            delay={delayFor(n)}
+            onHover={onHover}
+            onSelect={onSelect}
+          />
+        ) : null,
+      )}
     </svg>
   );
 }
@@ -638,7 +710,7 @@ export function Skills() {
   const activeKey = hovered ?? selected;
   const active = activeKey ? (byKey.get(activeKey) ?? null) : null;
   const related = useMemo(() => relatedTo(active), [active]);
-  const toggle = (key: string) => setSelected((cur) => (cur === key ? null : key));
+  const toggle = useCallback((key: string) => setSelected((cur) => (cur === key ? null : key)), []);
 
   return (
     <section id="skills" className="section">

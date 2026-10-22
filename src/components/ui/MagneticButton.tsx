@@ -21,7 +21,7 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary: "bg-fg text-bg",
-  outline: "border border-line-strong text-fg bg-white/[0.02] backdrop-blur-sm",
+  outline: "border border-line-strong text-fg bg-bg/50",
 };
 
 /** Button/link that drifts toward the cursor, with a gradient fill on hover. */
