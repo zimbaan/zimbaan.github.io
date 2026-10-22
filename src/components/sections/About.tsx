@@ -9,7 +9,7 @@ import { Reveal } from "../ui/Reveal";
 import { Glow } from "../ui/Background";
 import { Portrait } from "../ui/Portrait";
 
-/** Renders **highlighted** phrases from the summary copy. */
+/** Renders **highlighted** phrases from the summary copy as italic serif accents. */
 function Highlighted({ text, lead }: { text: string; lead: boolean }) {
   return (
     <>
@@ -17,16 +17,14 @@ function Highlighted({ text, lead }: { text: string; lead: boolean }) {
         i % 2 === 0 ? (
           part
         ) : (
-          <span
+          <em
             key={i}
-            className={
-              lead
-                ? "bg-[linear-gradient(90deg,var(--color-accent),var(--color-accent-2))] bg-[length:100%_1px] bg-bottom bg-no-repeat text-fg"
-                : "text-fg"
-            }
+            // Padding stops the italic overhang being clipped by the gradient fill; the negative margin
+            // cancels it so punctuation still sits right after the phrase.
+            className={lead ? "text-gradient -mr-[0.1em] pr-[0.1em] [box-decoration-break:clone]" : "text-fg"}
           >
             {part}
-          </span>
+          </em>
         ),
       )}
     </>
@@ -87,7 +85,7 @@ export function About() {
           lines={[
             "From raw data",
             <>
-              to <span className="text-gradient">intelligent</span> systems.
+              to <em className="text-gradient -mr-[0.1em] pr-[0.1em] font-serif font-normal">intelligent</em> systems.
             </>,
           ]}
         />
@@ -104,8 +102,8 @@ export function About() {
                   <p
                     className={
                       i === 0
-                        ? "font-display text-[clamp(1.4rem,2.4vw,1.85rem)] leading-snug font-medium tracking-tight text-fg/70"
-                        : "max-w-2xl text-lg leading-relaxed text-muted text-pretty sm:text-xl"
+                        ? "font-serif text-[clamp(1.9rem,3.3vw,2.7rem)] leading-[1.12] tracking-[-0.01em] text-fg/85"
+                        : "max-w-2xl font-serif text-[1.3rem] leading-[1.4] text-muted text-pretty sm:text-[1.5rem]"
                     }
                   >
                     <Highlighted text={p} lead={i === 0} />
