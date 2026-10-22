@@ -25,10 +25,21 @@ export function scrollToId(id: string) {
   focus();
 }
 
+let locks = 0;
+
+/**
+ * Reference-counted scroll lock: overlays can stack (e.g. ⌘K over a project modal), and the
+ * page only unlocks when the last one closes.
+ */
 export function lockScroll(locked: boolean) {
+  locks = Math.max(0, locks + (locked ? 1 : -1));
+  const lock = locks > 0;
   if (lenis) {
-    if (locked) lenis.stop();
+    if (lock) lenis.stop();
     else lenis.start();
   }
-  document.documentElement.style.overflow = locked ? "hidden" : "";
+  document.documentElement.style.overflow = lock ? "hidden" : "";
 }
+
+/** Lenis may be created after an overlay locked the page; keep it in sync. */
+export const isScrollLocked = () => locks > 0;

@@ -22,7 +22,7 @@ Every word on the site comes from **`src/data/resume.ts`**: profile links, summa
 - **Skills → evidence.** Each skill has a `usedIn` list (`"turing" | "iqube" | "nlsql" | "debugger"`). That powers the "Where I used it" panel in the Skills section. Leave it empty for skills not tied to a listed role or project.
 - **Projects.** `repo: null` hides the Source button. `flow` is the step list shown in the case-study modal.
 - **Resume PDF.** Replace `public/resume.pdf` with the latest copy.
-- **Photo.** `public/images/kapil-{480,800,1100}.webp` plus `kapil-800.jpg` (fallback), all cropped to 4:5 and colour-graded to match the theme. `portrait.placeholder` in `resume.ts` is a tiny blurred preview shown while the photo loads. To swap the photo, replace those files with the same names and sizes.
+- **Photo.** `public/images/kapil-cutout-{480,800,1100}.webp`: the background was removed on-device (Apple Vision), the edges cleaned, and the colours graded to the site palette (cool violet shadows, violet/cyan rim light). `portrait.placeholder` in `resume.ts` is a tiny blurred silhouette shown while it loads. To swap the photo, replace those files with transparent WebPs of the same names.
 - **About text.** `summary` in `resume.ts` is a list of paragraphs; wrap a phrase in `**double asterisks**` to highlight it.
 
 ## Things to fill in (TODO)
@@ -56,7 +56,7 @@ Every push to `main` builds and deploys automatically via `.github/workflows/dep
 
 | Preset | Performance | Accessibility | Best Practices | SEO |
 | --- | --- | --- | --- | --- |
-| Mobile | 94 | 100 | 100 | 100 |
+| Mobile | 92–94 | 100 | 100 | 100 |
 | Desktop | 99 | 100 | 100 | 100 |
 
 Scores vary a little between runs and will differ once hosted (CDN, compression, HTTP/2).

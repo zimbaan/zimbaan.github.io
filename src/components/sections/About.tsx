@@ -9,7 +9,7 @@ import { Reveal } from "../ui/Reveal";
 import { Glow } from "../ui/Background";
 import { Portrait } from "../ui/Portrait";
 
-/** Renders **highlighted** phrases from the summary copy as italic serif accents. */
+/** Renders **highlighted** phrases from the summary copy. */
 function Highlighted({ text, lead }: { text: string; lead: boolean }) {
   return (
     <>
@@ -17,14 +17,9 @@ function Highlighted({ text, lead }: { text: string; lead: boolean }) {
         i % 2 === 0 ? (
           part
         ) : (
-          <em
-            key={i}
-            // Padding stops the italic overhang being clipped by the gradient fill; the negative margin
-            // cancels it so punctuation still sits right after the phrase.
-            className={lead ? "text-gradient -mr-[0.1em] pr-[0.1em] [box-decoration-break:clone]" : "text-fg"}
-          >
+          <span key={i} className={lead ? "text-gradient font-semibold" : "font-medium text-fg"}>
             {part}
-          </em>
+          </span>
         ),
       )}
     </>
@@ -85,7 +80,7 @@ export function About() {
           lines={[
             "From raw data",
             <>
-              to <em className="text-gradient -mr-[0.1em] pr-[0.1em] font-serif font-normal">intelligent</em> systems.
+              to <span className="text-gradient">intelligent</span> systems.
             </>,
           ]}
         />
@@ -96,14 +91,20 @@ export function About() {
           </Reveal>
 
           <div className="lg:col-span-7">
+            <Reveal>
+              <p className="mb-5 flex items-center gap-2 font-mono text-xs text-muted">
+                <span className="text-accent-2">~/kapil</span>
+                <span aria-hidden="true">›</span> cat README.md
+              </p>
+            </Reveal>
             <div className="space-y-6">
               {summary.map((p, i) => (
                 <Reveal key={i} delay={0.05 + i * 0.08}>
                   <p
                     className={
                       i === 0
-                        ? "font-serif text-[clamp(1.9rem,3.3vw,2.7rem)] leading-[1.12] tracking-[-0.01em] text-fg/85"
-                        : "max-w-2xl font-serif text-[1.3rem] leading-[1.4] text-muted text-pretty sm:text-[1.5rem]"
+                        ? "font-display text-[clamp(1.55rem,2.6vw,2.15rem)] leading-[1.25] font-medium tracking-tight text-fg/80"
+                        : "max-w-2xl text-lg leading-relaxed text-muted text-pretty sm:text-xl"
                     }
                   >
                     <Highlighted text={p} lead={i === 0} />

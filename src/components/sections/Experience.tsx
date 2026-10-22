@@ -22,10 +22,24 @@ export function Experience() {
       return;
     }
     let ctx: { revert: () => void } | undefined;
+    let ro: ResizeObserver | undefined;
     let cancelled = false;
+    const showStatic = () => {
+      if (!line.current) return;
+      line.current.style.transform = "none";
+      nodes.forEach((n) => (n.dataset.on = "true"));
+    };
     Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ gsap }, { ScrollTrigger }]) => {
       if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
+      // Content above can change height after this runs (fonts swapping in, the mobile skill
+      // panel opening), which would leave trigger positions stale; re-measure when it does.
+      let timer = 0;
+      ro = new ResizeObserver(() => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => ScrollTrigger.refresh(), 150);
+      });
+      ro.observe(document.getElementById("main") ?? document.body);
       ctx = gsap.context(() => {
         gsap.fromTo(
           line.current,
@@ -45,9 +59,10 @@ export function Experience() {
           });
         });
       }, list);
-    });
+    }, showStatic);
     return () => {
       cancelled = true;
+      ro?.disconnect();
       ctx?.revert();
     };
   }, []);

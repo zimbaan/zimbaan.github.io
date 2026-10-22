@@ -1,12 +1,14 @@
 import { Component, type ReactNode } from "react";
 
-/** Renders nothing if a child throws (used so a WebGL failure never breaks the page). */
-export class ErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+type Props = { children: ReactNode; fallback?: ReactNode };
+
+/** Renders the fallback (nothing by default) if a child throws, e.g. WebGL failing or a chunk not loading. */
+export class ErrorBoundary extends Component<Props, { failed: boolean }> {
   state = { failed: false };
   static getDerivedStateFromError() {
     return { failed: true };
   }
   render() {
-    return this.state.failed ? null : this.props.children;
+    return this.state.failed ? (this.props.fallback ?? null) : this.props.children;
   }
 }
