@@ -9,22 +9,23 @@ export function Background() {
         aria-hidden="true"
         className="bg-grid pointer-events-none fixed inset-0 -z-10 [mask-image:radial-gradient(ellipse_80%_70%_at_50%_40%,#000_30%,transparent_100%)]"
       />
+      {/* Grain is skipped on small screens: a full-screen overlay costs a compositing pass every frame. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[60] opacity-[0.035]"
+        className="pointer-events-none fixed inset-0 z-[60] hidden opacity-[0.035] md:block"
         style={{ backgroundImage: NOISE, backgroundSize: "200px 200px" }}
       />
     </>
   );
 }
 
-/** Soft, slowly drifting colour glow used behind sections. */
+/** Soft colour glow used behind sections (static: animating huge layers costs frames). */
 export function Glow({ className = "", color = "accent" }: { className?: string; color?: "accent" | "accent-2" }) {
   const c = color === "accent" ? "124 92 255" : "34 211 238";
   return (
     <div
       aria-hidden="true"
-      className={`pointer-events-none absolute -z-10 aspect-square animate-drift rounded-full ${className}`}
+      className={`pointer-events-none absolute -z-10 aspect-square rounded-full ${className}`}
       style={{ background: `radial-gradient(circle, rgb(${c} / 0.16), transparent 65%)` }}
     />
   );

@@ -15,13 +15,22 @@ export function Contact() {
   const [copied, setCopied] = useState(false);
   const toast = useToast();
 
-  // The heading's gradient follows the cursor. Each line clips its own background,
-  // so the centre is set relative to every line.
+  // The heading's gradient follows the cursor. Each line clips its own background, so the
+  // centre is set relative to every line; updates are batched to one per animation frame.
+  const pointer = useRef<{ x: number; y: number } | null>(null);
   const onMove = (e: PointerEvent<HTMLElement>) => {
-    heading.current?.querySelectorAll<HTMLElement>("[data-grad]").forEach((line) => {
-      const r = line.getBoundingClientRect();
-      line.style.setProperty("--gx", `${e.clientX - r.left}px`);
-      line.style.setProperty("--gy", `${e.clientY - r.top}px`);
+    const scheduled = pointer.current !== null;
+    pointer.current = { x: e.clientX, y: e.clientY };
+    if (scheduled) return;
+    requestAnimationFrame(() => {
+      const p = pointer.current;
+      pointer.current = null;
+      if (!p) return;
+      heading.current?.querySelectorAll<HTMLElement>("[data-grad]").forEach((line) => {
+        const r = line.getBoundingClientRect();
+        line.style.setProperty("--gx", `${p.x - r.left}px`);
+        line.style.setProperty("--gy", `${p.y - r.top}px`);
+      });
     });
   };
 

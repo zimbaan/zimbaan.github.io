@@ -29,12 +29,7 @@ function SplitLine({ text, offset, className }: { text: string; offset: number; 
   return (
     <span className={`-mb-[0.06em] block overflow-hidden pb-[0.12em] ${className ?? ""}`} aria-hidden="true">
       {[...text].map((ch, i) => (
-        <motion.span
-          key={i}
-          custom={offset + i}
-          variants={charVariants}
-          className="inline-block origin-bottom-left will-change-transform"
-        >
+        <motion.span key={i} custom={offset + i} variants={charVariants} className="inline-block origin-bottom-left">
           {ch === " " ? " " : ch}
         </motion.span>
       ))}
@@ -46,15 +41,16 @@ export function Hero({ ready }: { ready: boolean }) {
   const reduced = useReducedMotion();
   const [show3D, setShow3D] = useState(false);
 
-  // Load the WebGL scene only after first paint and the preloader, so it never blocks the text.
+  // Load the network only after the intro animation has finished, then when the browser is idle.
+  // Parsing/compiling it mid-intro is what made the entrance stutter.
   useEffect(() => {
     if (!ready) return;
     const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
-    if (w.requestIdleCallback) {
-      w.requestIdleCallback(() => setShow3D(true), { timeout: 700 });
-    } else {
-      window.setTimeout(() => setShow3D(true), 250);
-    }
+    const t = window.setTimeout(() => {
+      if (w.requestIdleCallback) w.requestIdleCallback(() => setShow3D(true), { timeout: 1500 });
+      else setShow3D(true);
+    }, 1700);
+    return () => window.clearTimeout(t);
   }, [ready]);
 
   return (
@@ -89,7 +85,7 @@ export function Hero({ ready }: { ready: boolean }) {
       >
         <motion.p
           variants={item}
-          className="inline-flex items-center gap-2.5 rounded-full border border-line bg-white/[0.03] px-3.5 py-1.5 font-mono text-[11px] text-muted backdrop-blur-md sm:text-xs"
+          className="inline-flex items-center gap-2.5 rounded-full border border-line bg-bg/60 px-3.5 py-1.5 font-mono text-[11px] text-muted sm:text-xs"
         >
           <span className="relative flex size-2">
             <span className="absolute inset-0 animate-pulse-ring rounded-full bg-ok" />

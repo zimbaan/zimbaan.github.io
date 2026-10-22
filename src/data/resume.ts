@@ -25,8 +25,24 @@ export const profile = {
   resume: `${import.meta.env.BASE_URL}resume.pdf`,
 };
 
-export const summary =
-  "AI/ML developer with hands-on experience building LLM and RAG applications, machine learning models, and REST APIs in Python. Built a natural-language-to-SQL agent with LangChain, ChromaDB, and prompt engineering, and developed regression models for insurance claim prediction through feature engineering and hyperparameter tuning. Currently at Turing AI, reviewing model responses to support LLM fine-tuning.";
+// About-section copy. Wrap a phrase in **double asterisks** to highlight it.
+export const summary = [
+  "I'm an AI/ML developer with hands-on experience building **LLM and RAG applications**, **machine learning models**, and **REST APIs** in Python.",
+  "I built a **natural-language-to-SQL agent** with LangChain, ChromaDB, and prompt engineering, and developed **regression models for insurance claim prediction** through feature engineering and hyperparameter tuning.",
+];
+
+const img = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
+
+export const portrait = {
+  alt: "Portrait of Kapil Adhithya N in a black suit",
+  webp: [480, 800, 1100].map((w) => `${img(`kapil-${w}.webp`)} ${w}w`).join(", "),
+  jpg: img("kapil-800.jpg"),
+  width: 800,
+  height: 1000,
+  // 20px-wide blurred preview, shown while the real photo loads.
+  placeholder:
+    "data:image/webp;base64,UklGRmwCAABXRUJQVlA4WAoAAAAgAAAAEwAAGAAASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDggfgAAAFAEAJ0BKhQAGQA+0VqkTSglIyIoDVEAGglnAL84DJe9aFoBfDtADGele1AA/qkyeiMKlBolRqn/KHQx3YvpYOOSROJcUoxPhYWI8Y+eZgC2KFoT0iP8Xdkl3Fcilp2GD/giUp5n9tQpK51xQkp4k0ksA51IESN/0PlnW4AAAA==",
+};
 
 export type Stat =
   | { kind: "number"; value: number; decimals: number; suffix?: string; label: string }
