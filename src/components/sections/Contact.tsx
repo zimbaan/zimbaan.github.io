@@ -1,17 +1,17 @@
 import { useRef, useState, type PointerEvent } from "react";
-import { motion } from "motion/react";
 import { ArrowUpRight, Check, Copy, Download, Mail } from "lucide-react";
 import { profile } from "../../data/resume";
 import { copyText } from "../../lib/clipboard";
-import { ease } from "../../lib/motion";
 import { MagneticButton } from "../ui/MagneticButton";
+import { MaskedHeading } from "../ui/MaskedHeading";
+import { MessageComposer } from "../ui/MessageComposer";
 import { Reveal } from "../ui/Reveal";
 import { useToast } from "../ui/Toast";
 import { GitHubIcon, LinkedInIcon } from "../ui/BrandIcons";
 import { Glow } from "../ui/Background";
 
 export function Contact() {
-  const heading = useRef<HTMLHeadingElement>(null);
+  const heading = useRef<HTMLDivElement>(null);
   const [copied, setCopied] = useState(false);
   const toast = useToast();
 
@@ -26,7 +26,7 @@ export function Contact() {
       const p = pointer.current;
       pointer.current = null;
       if (!p) return;
-      heading.current?.querySelectorAll<HTMLElement>("[data-grad]").forEach((line) => {
+      heading.current?.querySelectorAll<HTMLElement>("[data-line]").forEach((line) => {
         const r = line.getBoundingClientRect();
         line.style.setProperty("--gx", `${p.x - r.left}px`);
         line.style.setProperty("--gy", `${p.y - r.top}px`);
@@ -53,62 +53,61 @@ export function Contact() {
           </p>
         </Reveal>
 
-        <h2
-          ref={heading}
-          className="mt-6 max-w-5xl font-display text-[clamp(2.9rem,9vw,8rem)] leading-[0.95] font-semibold tracking-[-0.04em]"
-        >
-          {["Let's build", "something", "intelligent."].map((line, i) => (
-            <span key={line} className="-mb-[0.08em] block overflow-hidden">
-              <motion.span
-                data-grad
-                // Bottom padding keeps descenders inside the clipped background.
-                className="block bg-clip-text pb-[0.16em] text-transparent [background-image:radial-gradient(520px_circle_at_var(--gx,30%)_var(--gy,40%),#a78bfa,#22d3ee_30%,#ededf0_62%)]"
-                initial={{ y: "105%" }}
-                whileInView={{ y: "0%" }}
-                viewport={{ once: true, margin: "0px 0px -10% 0px" }}
-                transition={{ duration: 1, ease, delay: i * 0.08 }}
+        <div className="mt-6 grid items-center gap-12 lg:grid-cols-12 lg:gap-14">
+          <div className="lg:col-span-7">
+            <div ref={heading}>
+              <MaskedHeading
+                lines={["Let's build", "something", "intelligent."]}
+                className="font-display text-[clamp(2.9rem,7vw,6.25rem)] leading-[0.95] font-semibold tracking-[-0.04em]"
+                maskClassName="-mb-[0.08em]"
+                // Bottom padding keeps descenders inside the clipped gradient background.
+                lineClassName="bg-clip-text pb-[0.16em] text-transparent [background-image:radial-gradient(520px_circle_at_var(--gx,30%)_var(--gy,40%),#a78bfa,#22d3ee_30%,#ededf0_62%)]"
+              />
+            </div>
+
+            <Reveal delay={0.2}>
+              <p className="mt-8 max-w-xl text-lg text-muted">
+                Have a role, project, or idea in mind? My inbox is open.
+              </p>
+            </Reveal>
+
+            <Reveal delay={0.25}>
+              <button
+                type="button"
+                onClick={copy}
+                data-cursor="Copy"
+                aria-label={`Copy email address ${profile.email}`}
+                className="group mt-10 flex max-w-full items-center gap-4 rounded-2xl border border-line bg-white/[0.02] py-4 pr-5 pl-5 text-left transition-colors hover:border-line-strong sm:pr-6"
               >
-                {line}
-              </motion.span>
-            </span>
-          ))}
-        </h2>
+                <span className="min-w-0 truncate font-mono text-base text-fg sm:text-2xl">{profile.email}</span>
+                <span className="grid size-9 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors group-hover:text-fg">
+                  {copied ? <Check className="size-4 text-ok" /> : <Copy className="size-4" />}
+                </span>
+              </button>
+            </Reveal>
 
-        <Reveal delay={0.2}>
-          <p className="mt-8 max-w-xl text-lg text-muted">Have a role, project, or idea in mind? My inbox is open.</p>
-        </Reveal>
-
-        <Reveal delay={0.25}>
-          <button
-            type="button"
-            onClick={copy}
-            data-cursor="Copy"
-            aria-label={`Copy email address ${profile.email}`}
-            className="group mt-10 flex max-w-full items-center gap-4 rounded-2xl border border-line bg-white/[0.02] py-4 pr-5 pl-5 text-left transition-colors hover:border-line-strong sm:pr-6"
-          >
-            <span className="min-w-0 truncate font-mono text-base text-fg sm:text-2xl">{profile.email}</span>
-            <span className="grid size-9 shrink-0 place-items-center rounded-full border border-line text-muted transition-colors group-hover:text-fg">
-              {copied ? <Check className="size-4 text-ok" /> : <Copy className="size-4" />}
-            </span>
-          </button>
-        </Reveal>
-
-        <Reveal delay={0.3}>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <MagneticButton href={`mailto:${profile.email}`}>
-              <Mail className="size-4" aria-hidden="true" /> Email me
-            </MagneticButton>
-            <MagneticButton variant="outline" href={profile.github} external>
-              <GitHubIcon /> GitHub <ArrowUpRight className="size-3.5 text-muted" aria-hidden="true" />
-            </MagneticButton>
-            <MagneticButton variant="outline" href={profile.linkedin} external>
-              <LinkedInIcon /> LinkedIn <ArrowUpRight className="size-3.5 text-muted" aria-hidden="true" />
-            </MagneticButton>
-            <MagneticButton variant="outline" href={profile.resume} download>
-              <Download className="size-4" aria-hidden="true" /> Resume
-            </MagneticButton>
+            <Reveal delay={0.3}>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <MagneticButton href={`mailto:${profile.email}`}>
+                  <Mail className="size-4" aria-hidden="true" /> Email me
+                </MagneticButton>
+                <MagneticButton variant="outline" href={profile.github} external>
+                  <GitHubIcon /> GitHub <ArrowUpRight className="size-3.5 text-muted" aria-hidden="true" />
+                </MagneticButton>
+                <MagneticButton variant="outline" href={profile.linkedin} external>
+                  <LinkedInIcon /> LinkedIn <ArrowUpRight className="size-3.5 text-muted" aria-hidden="true" />
+                </MagneticButton>
+                <MagneticButton variant="outline" href={profile.resume} download>
+                  <Download className="size-4" aria-hidden="true" /> Resume
+                </MagneticButton>
+              </div>
+            </Reveal>
           </div>
-        </Reveal>
+
+          <Reveal delay={0.15} className="lg:col-span-5">
+            <MessageComposer />
+          </Reveal>
+        </div>
       </div>
     </section>
   );

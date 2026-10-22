@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "motion/react";
 import { ArrowDownRight, Download } from "lucide-react";
 import { profile } from "../../data/resume";
@@ -8,9 +8,12 @@ import { ease } from "../../lib/motion";
 import { MagneticButton } from "../ui/MagneticButton";
 import { ScrambleText } from "../ui/ScrambleText";
 import { ErrorBoundary } from "../ui/ErrorBoundary";
+import { lazyRetry } from "../../lib/lazyRetry";
 
 // Phones and low-core machines get the dependency-free 2D canvas; everything else gets WebGL.
-const HeroCanvas = lazy(() => (isLowPower() ? import("../../three/HeroCanvas2D") : import("../../three/HeroCanvas")));
+const HeroCanvas = lazyRetry(() =>
+  isLowPower() ? import("../../three/HeroCanvas2D") : import("../../three/HeroCanvas"),
+);
 
 const container: Variants = {
   hidden: {},
