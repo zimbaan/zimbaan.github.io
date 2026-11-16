@@ -497,6 +497,7 @@ const evidenceTarget: Record<EvidenceId, string> = {
   turing: "experience",
   iqube: "experience",
   nlsql: "projects",
+  posttrain: "projects",
   debugger: "projects",
   solar: "projects",
 };

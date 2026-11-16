@@ -1,11 +1,12 @@
 // Single source of truth for every piece of content on the site.
 // Edit this file to update the portfolio; components render from it.
 
-export type EvidenceId = "turing" | "iqube" | "nlsql" | "debugger" | "solar";
+export type EvidenceId = "turing" | "iqube" | "posttrain" | "nlsql" | "debugger" | "solar";
 
 export const evidenceLabels: Record<EvidenceId, { title: string; kind: string }> = {
   turing: { title: "Turing AI", kind: "Experience" },
   iqube: { title: "IQube Innovation Center", kind: "Internship" },
+  posttrain: { title: "Text-to-SQL Post-Training", kind: "Project" },
   nlsql: { title: "Natural Language SQL Agent", kind: "Project" },
   debugger: { title: "AI Code Debugger", kind: "Project" },
   solar: { title: "Solar Energy Efficiency", kind: "Project" },
@@ -29,7 +30,7 @@ export const profile = {
 // About-section copy. Wrap a phrase in **double asterisks** to highlight it.
 export const summary = [
   "I'm an AI/ML engineer working on **frontier model evaluation** at Turing AI, using **RLHF** and **supervised fine-tuning (SFT)** workflows to find where today's models fall short.",
-  "I also build LLM tools and data projects: a **natural-language-to-SQL agent** on LangChain, Ollama, and FastAPI, an **AI code debugger** powered by StarCoder, and a **solar efficiency study** whose maintenance plan raised panel output by 18.2%.",
+  "I also build LLM systems end to end: a **text-to-SQL post-training pipeline** (LoRA SFT and execution-verified DPO with Hugging Face TRL), a **natural-language-to-SQL agent** on LangChain, Ollama, and FastAPI, and an **AI code debugger** powered by StarCoder.",
 ];
 
 const img = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
@@ -68,7 +69,10 @@ export const skillCategories: SkillCategory[] = [
     short: "LLM Eval",
     skills: [
       { name: "RLHF", usedIn: ["turing"] },
-      { name: "SFT", usedIn: ["turing"] },
+      { name: "SFT", usedIn: ["turing", "posttrain"] },
+      { name: "DPO", usedIn: ["posttrain"] },
+      { name: "LoRA / PEFT", usedIn: ["posttrain"] },
+      { name: "Evaluation harnesses", usedIn: ["posttrain"] },
       { name: "Frontier model evaluation", usedIn: ["turing"] },
       { name: "Agentic tasks", usedIn: ["turing"] },
       { name: "STEM", usedIn: [] },
@@ -81,7 +85,7 @@ export const skillCategories: SkillCategory[] = [
     skills: [
       { name: "LangChain", usedIn: ["nlsql", "debugger"] },
       { name: "Ollama", usedIn: ["nlsql"] },
-      { name: "Hugging Face", usedIn: ["debugger"] },
+      { name: "Hugging Face", usedIn: ["posttrain", "debugger"] },
       { name: "LLM integration", usedIn: ["nlsql", "debugger"] },
       { name: "Prompt engineering", usedIn: ["debugger"] },
       { name: "Text-to-SQL", usedIn: ["nlsql"] },
@@ -93,7 +97,7 @@ export const skillCategories: SkillCategory[] = [
     name: "Machine Learning",
     short: "ML",
     skills: [
-      { name: "PyTorch", usedIn: [] },
+      { name: "PyTorch", usedIn: ["posttrain"] },
       { name: "Predictive modeling", usedIn: ["iqube"] },
       { name: "Linear Regression", usedIn: ["iqube"] },
       { name: "Random Forest", usedIn: ["iqube"] },
@@ -122,8 +126,8 @@ export const skillCategories: SkillCategory[] = [
     name: "Languages & Databases",
     short: "Lang / DB",
     skills: [
-      { name: "Python", usedIn: ["iqube", "nlsql", "solar"] },
-      { name: "SQL", usedIn: ["nlsql", "solar"] },
+      { name: "Python", usedIn: ["iqube", "posttrain", "nlsql", "solar"] },
+      { name: "SQL", usedIn: ["posttrain", "nlsql", "solar"] },
       { name: "C/C++", usedIn: [] },
       { name: "Java", usedIn: [] },
       { name: "MySQL", usedIn: [] },
@@ -152,6 +156,7 @@ export const marquee = [
   "PyTorch",
   "RLHF",
   "SFT",
+  "DPO",
   "LangChain",
   "Ollama",
   "Hugging Face",
@@ -211,7 +216,7 @@ export const experience: Experience[] = [
 ];
 
 export type Project = {
-  id: "nlsql" | "debugger" | "solar";
+  id: "posttrain" | "nlsql" | "debugger" | "solar";
   title: string;
   dates: string;
   blurb: string;
@@ -223,6 +228,30 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    id: "posttrain",
+    title: "Text-to-SQL Post-Training: SFT + DPO",
+    dates: "Nov 2026 – Present",
+    blurb:
+      "A post-training pipeline that teaches a small open model to write SQL with LoRA SFT, then trains it further with DPO on preference pairs checked by actually running the queries.",
+    points: [
+      "Built an end-to-end post-training pipeline for Qwen2.5-Coder-0.5B-Instruct on the Spider text-to-SQL benchmark: LoRA SFT with Hugging Face TRL, then DPO on preference pairs mined from the model's own outputs.",
+      "Generated execution-verified preference data: the SFT model samples 8 queries per held-out question, each runs in a read-only SQLite sandbox, and correct vs. incorrect results become chosen / rejected pairs (gold SQL as the fallback).",
+      "Built an execution-accuracy evaluation harness with per-query-type breakdowns, and designed ablations on data size, SFT vs. SFT + DPO, and a control that spends the DPO questions on extra SFT instead.",
+    ],
+    stack: ["PyTorch", "Hugging Face TRL", "PEFT / LoRA", "Transformers", "Qwen2.5-Coder", "SQLite"],
+    flowLabel: "How the training loop runs",
+    flow: [
+      "Spider train split",
+      "LoRA SFT (TRL)",
+      "Sample 8 queries",
+      "Execute + verify",
+      "Preference pairs",
+      "DPO (TRL)",
+      "Execution accuracy",
+    ],
+    repo: "https://github.com/zimbaan/text2sql-post-training",
+  },
   {
     id: "nlsql",
     title: "Natural Language SQL Agent",

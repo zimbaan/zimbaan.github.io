@@ -15,6 +15,7 @@ import { SqlPipeline } from "../demos/SqlPipeline";
 import { SqlTerminal } from "../demos/SqlTerminal";
 import { CodeDebugger } from "../demos/CodeDebugger";
 import { SolarStudy } from "../demos/SolarStudy";
+import { PostTrainingPipeline } from "../demos/PostTrainingPipeline";
 
 function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
   const [fine] = useState(hasFinePointer);
@@ -225,7 +226,7 @@ export function Projects() {
           index="04"
           label="Projects"
           lines={["Things I've built", "with models and data."]}
-          intro="Two LLM builds and a data-driven field study. The panels beside each one are interactive, client-side recreations of how the work came together."
+          intro="A post-training pipeline, two LLM apps and a data-driven field study. The panels beside each one are interactive, client-side recreations of how the work came together."
         />
 
         <div className="space-y-24 md:space-y-32">
@@ -235,7 +236,9 @@ export function Projects() {
                 <ProjectCard project={project} index={i} onOpen={() => setOpenId(project.id)} />
               </Reveal>
               <Reveal delay={0.1} className={`lg:col-span-7 ${i % 2 ? "lg:order-1" : ""}`}>
-                {project.id === "nlsql" ? (
+                {project.id === "posttrain" ? (
+                  <PostTrainingPipeline />
+                ) : project.id === "nlsql" ? (
                   <div className="space-y-6">
                     <div className="card p-5 sm:p-6">
                       <div className="mb-4 flex items-center justify-between">
