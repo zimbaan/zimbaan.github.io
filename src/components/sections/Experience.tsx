@@ -70,7 +70,7 @@ export function Experience() {
   return (
     <section id="experience" className="section">
       <div className="container-x">
-        <SectionHeading index="03" label="Experience" lines={["Where I've been", "shipping models."]} />
+        <SectionHeading index="03" label="Experience" lines={["Where I've been", "putting models to the test."]} />
 
         <div className="relative">
           <div aria-hidden="true" className="absolute top-2 bottom-2 left-[7px] w-px bg-line md:left-[231px]">

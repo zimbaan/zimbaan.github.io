@@ -14,6 +14,7 @@ import { GitHubIcon } from "../ui/BrandIcons";
 import { SqlPipeline } from "../demos/SqlPipeline";
 import { SqlTerminal } from "../demos/SqlTerminal";
 import { CodeDebugger } from "../demos/CodeDebugger";
+import { SolarStudy } from "../demos/SolarStudy";
 
 function ProjectCard({ project, index, onOpen }: { project: Project; index: number; onOpen: () => void }) {
   const [fine] = useState(hasFinePointer);
@@ -169,7 +170,7 @@ function ProjectModal({ project, onClose }: { project: Project | null; onClose: 
                 ))}
               </ul>
 
-              <h4 className="mt-8 font-mono text-[11px] tracking-[0.2em] text-muted uppercase">How a request flows</h4>
+              <h4 className="mt-8 font-mono text-[11px] tracking-[0.2em] text-muted uppercase">{project.flowLabel}</h4>
               <ol className="mt-4 flex flex-wrap items-center gap-2">
                 {project.flow.map((f, i) => (
                   <li key={f} className="flex items-center gap-2">
@@ -223,8 +224,8 @@ export function Projects() {
         <SectionHeading
           index="04"
           label="Projects"
-          lines={["Things I've built", "with language models."]}
-          intro="Two flagship LLM builds. The panels beside each one are interactive, client-side recreations of how the system works."
+          lines={["Things I've built", "with models and data."]}
+          intro="Two LLM builds and a data-driven field study. The panels beside each one are interactive, client-side recreations of how the work came together."
         />
 
         <div className="space-y-24 md:space-y-32">
@@ -239,14 +240,16 @@ export function Projects() {
                     <div className="card p-5 sm:p-6">
                       <div className="mb-4 flex items-center justify-between">
                         <p className="font-mono text-[11px] tracking-[0.2em] text-muted uppercase">Architecture</p>
-                        <p className="font-mono text-[10px] text-muted">RAG → SQL pipeline</p>
+                        <p className="font-mono text-[10px] text-muted">NL → SQL pipeline</p>
                       </div>
                       <SqlPipeline />
                     </div>
                     <SqlTerminal />
                   </div>
-                ) : (
+                ) : project.id === "debugger" ? (
                   <CodeDebugger />
+                ) : (
+                  <SolarStudy />
                 )}
               </Reveal>
             </div>

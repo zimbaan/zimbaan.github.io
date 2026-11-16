@@ -2,7 +2,7 @@
 // - /assets/* files have content hashes in their names, so they are served cache-first.
 // - Page navigations go to the network first (so new deploys show up) and fall back to the cache offline.
 // - Everything else (images, fonts, PDF) is served from cache and refreshed in the background.
-const CACHE = "kapil-portfolio-v2";
+const CACHE = "kapil-portfolio-v3";
 
 self.addEventListener("install", () => self.skipWaiting());
 

@@ -85,7 +85,7 @@ export function Portrait() {
         <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6">
           <div>
             <p className="font-display text-xl font-semibold tracking-tight">{profile.name}</p>
-            <p className="mt-0.5 font-mono text-[11px] text-fg/60">AI/ML Engineer · LLM &amp; RAG</p>
+            <p className="mt-0.5 font-mono text-[11px] text-fg/60">AI/ML Engineer · LLM Evaluation</p>
           </div>
           <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-line bg-bg/70 px-2.5 py-1 font-mono text-[10px] text-fg/70">
             <span className="size-1.5 rounded-full bg-ok" aria-hidden="true" />

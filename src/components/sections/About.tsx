@@ -123,7 +123,7 @@ export function About() {
                   <p className="font-mono text-[11px] tracking-[0.18em] text-muted uppercase">Now</p>
                   <p className="mt-1 text-fg">Data Analyst at Turing AI</p>
                   <p className="mt-1 text-sm text-muted">
-                    Reviewing and correcting model responses for the Gemini AI Code project to support LLM fine-tuning.
+                    Evaluating frontier models through RLHF workflows and leading a five-person evaluation pod.
                   </p>
                 </div>
               </div>

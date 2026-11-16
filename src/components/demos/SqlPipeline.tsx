@@ -3,24 +3,24 @@ import { motion, useInView, useReducedMotion } from "motion/react";
 import { Pause, Play } from "lucide-react";
 import { ease } from "../../lib/motion";
 
-type NodeId = "question" | "langchain" | "chroma" | "mongo" | "ollama" | "sql" | "db" | "charts";
+type NodeId = "question" | "api" | "langchain" | "mongo" | "ollama" | "sql" | "db" | "charts";
 
 const NODES: Record<NodeId, { x: number; y: number; title: string; sub: string }> = {
   question: { x: 90, y: 50, title: "Question", sub: "plain English" },
-  langchain: { x: 300, y: 50, title: "LangChain", sub: "orchestrator" },
-  chroma: { x: 510, y: 50, title: "ChromaDB", sub: "schema RAG" },
-  mongo: { x: 300, y: 170, title: "MongoDB", sub: "chat memory" },
+  api: { x: 300, y: 50, title: "FastAPI", sub: "auth + routing" },
+  langchain: { x: 510, y: 50, title: "LangChain", sub: "orchestrator" },
+  mongo: { x: 300, y: 170, title: "MongoDB", sub: "context memory" },
   ollama: { x: 510, y: 170, title: "Ollama LLM", sub: "SQL generation" },
   sql: { x: 510, y: 290, title: "SQL", sub: "executable query" },
-  db: { x: 300, y: 290, title: "Database", sub: "execute" },
+  db: { x: 300, y: 290, title: "Database", sub: "multi-database" },
   charts: { x: 90, y: 290, title: "Recharts", sub: "insights" },
 };
 
 const EDGES: [NodeId, NodeId][] = [
-  ["question", "langchain"],
+  ["question", "api"],
+  ["api", "langchain"],
   ["langchain", "mongo"],
-  ["langchain", "chroma"],
-  ["chroma", "ollama"],
+  ["langchain", "ollama"],
   ["ollama", "sql"],
   ["sql", "db"],
   ["db", "charts"],
@@ -28,10 +28,10 @@ const EDGES: [NodeId, NodeId][] = [
 
 const SEQUENCE: { node: NodeId; caption: string }[] = [
   { node: "question", caption: "A user asks a question in plain English." },
+  { node: "api", caption: "FastAPI checks the user's access and routes the request." },
   { node: "langchain", caption: "LangChain receives it and orchestrates the agent." },
-  { node: "mongo", caption: "Conversation context is loaded from MongoDB memory." },
-  { node: "langchain", caption: "Memory is merged into the prompt." },
-  { node: "chroma", caption: "Relevant table schemas are retrieved from ChromaDB (RAG)." },
+  { node: "mongo", caption: "Earlier questions and table context load from MongoDB memory." },
+  { node: "langchain", caption: "That context is merged into the prompt." },
   { node: "ollama", caption: "A local LLM served by Ollama generates the SQL." },
   { node: "sql", caption: "The result is an optimized, executable SQL statement." },
   { node: "db", caption: "The query runs against the target database." },
@@ -42,7 +42,7 @@ const W = 128;
 const H = 50;
 const edgeKey = (a: NodeId, b: NodeId) => [a, b].sort().join("-");
 
-/** Animated architecture diagram: a glowing packet travels through the RAG → SQL pipeline. */
+/** Animated architecture diagram: a glowing packet travels through the NL → SQL pipeline. */
 export function SqlPipeline() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { margin: "-15% 0px" });

@@ -1,24 +1,25 @@
 // Single source of truth for every piece of content on the site.
 // Edit this file to update the portfolio; components render from it.
 
-export type EvidenceId = "turing" | "iqube" | "nlsql" | "debugger";
+export type EvidenceId = "turing" | "iqube" | "nlsql" | "debugger" | "solar";
 
 export const evidenceLabels: Record<EvidenceId, { title: string; kind: string }> = {
   turing: { title: "Turing AI", kind: "Experience" },
   iqube: { title: "IQube Innovation Center", kind: "Internship" },
   nlsql: { title: "Natural Language SQL Agent", kind: "Project" },
   debugger: { title: "AI Code Debugger", kind: "Project" },
+  solar: { title: "Solar Energy Efficiency", kind: "Project" },
 };
 
 export const profile = {
   name: "Kapil Adhithya N",
   firstName: "Kapil",
   lastName: "Adhithya N",
-  headline: "AI/ML Engineer · LLM & RAG Developer",
-  roles: ["AI/ML Engineer", "LLM & RAG Developer", "LangChain · PyTorch · FastAPI"],
-  tagline: "I build LLM-powered systems that let people talk to their data.",
-  status: "Currently @ Turing AI, supporting LLM fine-tuning",
-  statusShort: "Now @ Turing AI · LLM fine-tuning",
+  headline: "AI/ML Engineer · Frontier Model Evaluation",
+  roles: ["AI/ML Engineer", "Frontier Model Evaluation", "RLHF · SFT · Agentic tasks"],
+  tagline: "I evaluate frontier AI models and build LLM systems that let people talk to their data.",
+  status: "Currently @ Turing AI, evaluating frontier models",
+  statusShort: "Now @ Turing AI · Model evaluation",
   email: "kapiladhithya@gmail.com",
   github: "https://github.com/zimbaan",
   linkedin: "https://www.linkedin.com/in/kapil-adhithya-6a7324236",
@@ -27,8 +28,8 @@ export const profile = {
 
 // About-section copy. Wrap a phrase in **double asterisks** to highlight it.
 export const summary = [
-  "I'm an AI/ML developer with hands-on experience building **LLM and RAG applications**, **machine learning models**, and **REST APIs** in Python.",
-  "I built a **natural-language-to-SQL agent** with LangChain, ChromaDB, and prompt engineering, and developed **regression models for insurance claim prediction** through feature engineering and hyperparameter tuning.",
+  "I'm an AI/ML engineer working on **frontier model evaluation** at Turing AI, using **RLHF** and **supervised fine-tuning (SFT)** workflows to find where today's models fall short.",
+  "I also build LLM tools and data projects: a **natural-language-to-SQL agent** on LangChain, Ollama, and FastAPI, an **AI code debugger** powered by StarCoder, and a **solar efficiency study** whose maintenance plan raised panel output by 18.2%.",
 ];
 
 const img = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
@@ -52,8 +53,8 @@ export type Stat =
 
 export const stats: Stat[] = [
   { kind: "number", value: 8.74, decimals: 2, suffix: "/10", label: "CGPA, B.Tech IT" },
-  { kind: "number", value: 2, decimals: 0, label: "Industry roles" },
-  { kind: "number", value: 2, decimals: 0, label: "LLM projects built" },
+  { kind: "number", value: 25, decimals: 0, suffix: "%", label: "Higher output, pod I led" },
+  { kind: "number", value: 18.2, decimals: 1, suffix: "%", label: "Solar output gain" },
   { kind: "text", value: "Best Outgoing", label: "Student of the department" },
 ];
 
@@ -62,37 +63,44 @@ export type SkillCategory = { id: string; name: string; short: string; skills: S
 
 export const skillCategories: SkillCategory[] = [
   {
+    id: "eval",
+    name: "LLM Evaluation & Training",
+    short: "LLM Eval",
+    skills: [
+      { name: "RLHF", usedIn: ["turing"] },
+      { name: "SFT", usedIn: ["turing"] },
+      { name: "Frontier model evaluation", usedIn: ["turing"] },
+      { name: "Agentic tasks", usedIn: ["turing"] },
+      { name: "STEM", usedIn: [] },
+    ],
+  },
+  {
     id: "genai",
-    name: "Generative AI & NLP",
+    name: "LLM Applications",
     short: "GenAI",
     skills: [
-      { name: "LLM applications", usedIn: ["nlsql", "debugger"] },
-      { name: "RAG", usedIn: ["nlsql"] },
-      { name: "Prompt engineering", usedIn: ["nlsql", "debugger"] },
       { name: "LangChain", usedIn: ["nlsql", "debugger"] },
-      { name: "Hugging Face", usedIn: ["debugger"] },
       { name: "Ollama", usedIn: ["nlsql"] },
+      { name: "Hugging Face", usedIn: ["debugger"] },
+      { name: "LLM integration", usedIn: ["nlsql", "debugger"] },
+      { name: "Prompt engineering", usedIn: ["debugger"] },
       { name: "Text-to-SQL", usedIn: ["nlsql"] },
       { name: "Contextual memory", usedIn: ["nlsql"] },
-      { name: "LLM fine-tuning support", usedIn: ["turing"] },
     ],
   },
   {
     id: "ml",
-    name: "Machine Learning & Deep Learning",
-    short: "ML / DL",
+    name: "Machine Learning",
+    short: "ML",
     skills: [
-      { name: "PyTorch", usedIn: ["turing"] },
-      { name: "TensorFlow", usedIn: ["turing"] },
-      { name: "scikit-learn", usedIn: ["iqube"] },
-      { name: "XGBoost", usedIn: ["iqube"] },
+      { name: "PyTorch", usedIn: [] },
+      { name: "Predictive modeling", usedIn: ["iqube"] },
       { name: "Linear Regression", usedIn: ["iqube"] },
       { name: "Random Forest", usedIn: ["iqube"] },
-      { name: "Classification", usedIn: [] },
-      { name: "Clustering", usedIn: [] },
+      { name: "XGBoost", usedIn: ["iqube"] },
       { name: "Feature engineering", usedIn: ["iqube"] },
       { name: "Hyperparameter tuning", usedIn: ["iqube"] },
-      { name: "Model evaluation", usedIn: ["iqube"] },
+      { name: "Risk segmentation", usedIn: ["iqube"] },
     ],
   },
   {
@@ -100,25 +108,13 @@ export const skillCategories: SkillCategory[] = [
     name: "Data Analysis",
     short: "Data",
     skills: [
-      { name: "Pandas", usedIn: ["iqube"] },
-      { name: "NumPy", usedIn: ["iqube"] },
-      { name: "Statistical analysis", usedIn: ["iqube"] },
+      { name: "Pandas", usedIn: ["solar"] },
+      { name: "NumPy", usedIn: ["solar"] },
+      { name: "Trend analysis", usedIn: ["solar"] },
+      { name: "Statistical evaluation", usedIn: ["iqube"] },
       { name: "Correlation analysis", usedIn: ["iqube"] },
       { name: "Outlier detection", usedIn: ["iqube"] },
-      { name: "Data visualization", usedIn: ["turing", "nlsql"] },
-    ],
-  },
-  {
-    id: "api",
-    name: "APIs & Deployment",
-    short: "APIs",
-    skills: [
-      { name: "FastAPI", usedIn: ["nlsql"] },
-      { name: "Node.js", usedIn: ["debugger"] },
-      { name: "Express", usedIn: ["debugger"] },
-      { name: "REST APIs", usedIn: ["nlsql", "debugger"] },
-      { name: "Model serving", usedIn: ["nlsql", "debugger"] },
-      { name: "WebSockets", usedIn: [] },
+      { name: "Data visualization", usedIn: ["nlsql"] },
     ],
   },
   {
@@ -126,27 +122,27 @@ export const skillCategories: SkillCategory[] = [
     name: "Languages & Databases",
     short: "Lang / DB",
     skills: [
-      { name: "Python", usedIn: ["turing", "iqube", "nlsql"] },
-      { name: "SQL", usedIn: ["nlsql"] },
-      { name: "JavaScript", usedIn: ["nlsql", "debugger"] },
+      { name: "Python", usedIn: ["iqube", "nlsql", "solar"] },
+      { name: "SQL", usedIn: ["nlsql", "solar"] },
       { name: "C/C++", usedIn: [] },
       { name: "Java", usedIn: [] },
-      { name: "MySQL", usedIn: ["nlsql"] },
+      { name: "MySQL", usedIn: [] },
       { name: "MongoDB", usedIn: ["nlsql"] },
-      { name: "ChromaDB", usedIn: ["nlsql"] },
     ],
   },
   {
     id: "tools",
-    name: "Tools",
+    name: "Frameworks & Tools",
     short: "Tools",
     skills: [
-      { name: "Git", usedIn: [] },
-      { name: "VS Code", usedIn: [] },
+      { name: "FastAPI", usedIn: ["nlsql"] },
+      { name: "Node.js", usedIn: ["debugger"] },
+      { name: "Express", usedIn: ["debugger"] },
       { name: "React", usedIn: ["nlsql", "debugger"] },
       { name: "Recharts", usedIn: ["nlsql"] },
       { name: "Tailwind CSS", usedIn: ["nlsql"] },
-      { name: "SDLC", usedIn: [] },
+      { name: "Git", usedIn: [] },
+      { name: "VS Code", usedIn: [] },
     ],
   },
 ];
@@ -154,20 +150,22 @@ export const skillCategories: SkillCategory[] = [
 export const marquee = [
   "Python",
   "PyTorch",
-  "TensorFlow",
+  "RLHF",
+  "SFT",
   "LangChain",
-  "Hugging Face",
   "Ollama",
-  "ChromaDB",
-  "scikit-learn",
-  "XGBoost",
+  "Hugging Face",
   "FastAPI",
+  "MongoDB",
+  "SQL",
+  "MySQL",
   "Pandas",
   "NumPy",
-  "MongoDB",
-  "MySQL",
+  "XGBoost",
   "React",
   "Node.js",
+  "Recharts",
+  "Tailwind CSS",
 ];
 
 export type Experience = {
@@ -186,15 +184,15 @@ export const experience: Experience[] = [
     id: "turing",
     role: "Data Analyst",
     company: "Turing AI",
-    start: "Jul 2025",
+    start: "Jul 2024",
     end: "Present",
     current: true,
     points: [
-      "Reviewed and corrected model responses for the Gemini AI Code project to support model fine-tuning, checking each output for accuracy and alignment with project objectives.",
-      "Created visualization-focused datasets for a Google project.",
-      "Handled machine learning, deep learning (PyTorch, TensorFlow), and automation tasks.",
+      "Contributed to Anthropic's CUA project by evaluating frontier models on complex tasks through RLHF workflows, and created agentic conversations for OpenAI evaluations to uncover model limitations.",
+      "Led a five-person pod delivering model-evaluation tasks, coordinating the team's work and keeping deliverables aligned with project requirements. The pod achieved 25% higher output than typical teams.",
+      "Created realistic, human-centered task examples for Google's Astra SBS project, supporting supervised fine-tuning (SFT) with data based on real-world user scenarios.",
     ],
-    tags: ["LLM fine-tuning", "PyTorch", "TensorFlow", "Data visualization"],
+    tags: ["RLHF", "SFT", "Frontier model evaluation", "Agentic tasks", "Team lead"],
   },
   {
     id: "iqube",
@@ -204,21 +202,22 @@ export const experience: Experience[] = [
     end: "Mar 2024",
     current: false,
     points: [
-      "Analyzed insurance claim data with predictive modeling, risk segmentation, and statistical evaluation to identify high-cost customer segments and key health risk factors.",
-      "Improved claim prediction accuracy through correlation analysis, outlier detection, and feature engineering.",
-      "Compared Linear Regression, Random Forest, and XGBoost models and tuned their hyperparameters.",
+      "Performed insurance claim analysis using predictive modeling, risk segmentation, and statistical evaluation to identify high-cost customer segments and key health risk factors.",
+      "Applied correlation analysis, outlier detection, and feature engineering to improve model accuracy.",
+      "Compared Linear Regression, Random Forest, and XGBoost models in data-driven experiments and optimized performance through hyperparameter tuning.",
     ],
-    tags: ["Regression", "XGBoost", "Feature engineering", "Statistics"],
+    tags: ["Predictive modeling", "XGBoost", "Feature engineering", "Statistics"],
   },
 ];
 
 export type Project = {
-  id: "nlsql" | "debugger";
+  id: "nlsql" | "debugger" | "solar";
   title: string;
   dates: string;
   blurb: string;
   points: string[];
   stack: string[];
+  flowLabel: string;
   flow: string[];
   repo: string | null;
 };
@@ -229,25 +228,16 @@ export const projects: Project[] = [
     title: "Natural Language SQL Agent",
     dates: "Aug 2025 – Oct 2025",
     blurb:
-      "An LLM-powered agent that turns plain-English questions into optimized, executable SQL across multiple database environments.",
+      "An AI-driven agent that turns plain-English questions into optimized, executable SQL across multiple database environments.",
     points: [
-      "Built an LLM-powered system that converts natural language queries into optimized, executable SQL statements across multiple database environments, using LangChain with Ollama for LLM integration.",
-      "Added retrieval-augmented generation (RAG) with ChromaDB and prompt engineering to guide SQL generation, and improved query accuracy using contextual memory stored in MongoDB.",
-      "Served the system through FastAPI REST APIs, with a React, Recharts, and Tailwind CSS front end that shows table relationships and data insights through interactive charts, plus user authentication and access control.",
+      "Developed an AI-driven SQL generation system that converts natural language queries into optimized, executable SQL statements, supporting multi-database environments.",
+      "Designed a visualization module that shows table relationships and data insights through interactive graphs and charts, with secure user authentication and access control.",
+      "Improved query generation accuracy through contextual memory in MongoDB, using LangChain + Ollama for LLM integration, FastAPI for backend orchestration, and React + Recharts + Tailwind CSS for front-end analytics.",
     ],
-    stack: ["LangChain", "Ollama", "ChromaDB", "FastAPI", "MongoDB", "React", "Recharts", "Tailwind CSS"],
-    flow: [
-      "Question",
-      "FastAPI",
-      "LangChain",
-      "MongoDB memory",
-      "ChromaDB schema retrieval",
-      "Ollama LLM",
-      "SQL",
-      "Database",
-      "Recharts",
-    ],
-    repo: null, // TODO: add the GitHub repo URL for the NL SQL Agent
+    stack: ["LangChain", "Ollama", "FastAPI", "MongoDB", "React", "Recharts", "Tailwind CSS"],
+    flowLabel: "How a request flows",
+    flow: ["Question", "FastAPI + auth", "LangChain", "MongoDB memory", "Ollama LLM", "SQL", "Database", "Recharts"],
+    repo: null,
   },
   {
     id: "debugger",
@@ -260,6 +250,7 @@ export const projects: Project[] = [
       "Wrote the LangChain prompt template and exposed the model via a Node.js/Express REST API with a React UI.",
     ],
     stack: ["LangChain", "Hugging Face", "StarCoder", "Node.js", "Express", "React"],
+    flowLabel: "How a request flows",
     flow: [
       "Code snippet (React UI)",
       "Express REST API",
@@ -269,6 +260,22 @@ export const projects: Project[] = [
     ],
     repo: "https://github.com/zimbaan/ai-code-debugger",
   },
+  {
+    id: "solar",
+    title: "Solar Energy Efficiency Optimization",
+    dates: "Dec 2023 – Mar 2024",
+    blurb:
+      "A study of 50,000+ climate and power readings that traced lost solar output to dust, and a cleaning plan that won it back.",
+    points: [
+      "Processed and analysed 50,000+ data points on climate conditions (temperature, humidity, solar radiation) and solar power output using Python (Pandas, NumPy) and SQL to uncover efficiency trends.",
+      "Identified a 17.5% average efficiency drop caused by dust accumulation and irregular maintenance, leading to a data-driven maintenance strategy that increased panel output by 18.2%.",
+      "Implemented a water-cleaning system for regular maintenance, saving the college ₹15K a year in infrastructure costs.",
+    ],
+    stack: ["Python", "Pandas", "NumPy", "SQL"],
+    flowLabel: "How the analysis ran",
+    flow: ["Climate + output data", "SQL", "Pandas / NumPy", "Trend analysis", "Dust-loss finding", "Cleaning schedule"],
+    repo: null,
+  },
 ];
 
 export const education = {
@@ -277,7 +284,17 @@ export const education = {
   start: "Dec 2021",
   end: "Apr 2025",
   cgpa: 8.74,
-  coursework: ["Machine Learning", "Data Mining", "Data Structures & Algorithms", "Databases", "Discrete Mathematics"],
+  coursework: [
+    "Machine Learning",
+    "Data Mining",
+    "Data Structures & Algorithms",
+    "Databases",
+    "Software Engineering",
+    "Object-Oriented Programming",
+    "Operating Systems",
+    "Computer Networks",
+    "Discrete Mathematics",
+  ],
 };
 
 export const awards = [

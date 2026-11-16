@@ -8,11 +8,11 @@ import { ease } from "../../lib/motion";
 const DRAFTS = [
   {
     subject: "AI/ML Engineer role",
-    body: "Hi Kapil, we're hiring an AI/ML Engineer and your RAG and text-to-SQL work stood out. Free for a quick call this week?",
+    body: "Hi Kapil, we're hiring an AI/ML Engineer and your model-evaluation and text-to-SQL work stood out. Free for a quick call this week?",
   },
   {
-    subject: "LLM project collaboration",
-    body: "Hi Kapil, we'd love help building a LangChain + RAG assistant over our internal docs. Would you be interested?",
+    subject: "Model evaluation project",
+    body: "Hi Kapil, we're setting up RLHF and SFT data work for our assistant and could use your frontier-model evaluation experience. Interested?",
   },
   {
     subject: "Text-to-SQL for our data team",

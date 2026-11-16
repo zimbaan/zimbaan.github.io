@@ -160,7 +160,7 @@ export function SqlTerminal() {
 
       const steps = [
         "loading chat memory · MongoDB",
-        `retrieving schema · ChromaDB → ${ex.tables.join(", ")}`,
+        `mapping schema → ${ex.tables.join(", ")}`,
         "generating SQL · Ollama",
       ];
       for (const text of steps) {

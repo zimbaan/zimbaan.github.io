@@ -498,6 +498,7 @@ const evidenceTarget: Record<EvidenceId, string> = {
   iqube: "experience",
   nlsql: "projects",
   debugger: "projects",
+  solar: "projects",
 };
 
 function InfoPanel({
