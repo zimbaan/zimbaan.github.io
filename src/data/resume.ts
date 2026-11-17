@@ -30,7 +30,7 @@ export const profile = {
 // About-section copy. Wrap a phrase in **double asterisks** to highlight it.
 export const summary = [
   "I'm an AI/ML engineer working on **frontier model evaluation** at Turing AI, using **RLHF** and **supervised fine-tuning (SFT)** workflows to find where today's models fall short.",
-  "I also build LLM systems end to end: a **text-to-SQL post-training pipeline** (LoRA SFT and execution-verified DPO with Hugging Face TRL), a **natural-language-to-SQL agent** on LangChain, Ollama, and FastAPI, and an **AI code debugger** powered by StarCoder.",
+  "I also build LLM systems end to end: a **text-to-SQL post-training pipeline** whose LoRA SFT and execution-verified DPO lifted a 0.5B model from 45.5% to 61.3% execution accuracy on Spider, a **natural-language-to-SQL agent** on LangChain, Ollama, and FastAPI, and an **AI code debugger** powered by StarCoder.",
 ];
 
 const img = (file: string) => `${import.meta.env.BASE_URL}images/${file}`;
@@ -55,7 +55,7 @@ export type Stat =
 export const stats: Stat[] = [
   { kind: "number", value: 8.74, decimals: 2, suffix: "/10", label: "CGPA, B.Tech IT" },
   { kind: "number", value: 25, decimals: 0, suffix: "%", label: "Higher output, pod I led" },
-  { kind: "number", value: 18.2, decimals: 1, suffix: "%", label: "Solar output gain" },
+  { kind: "number", value: 15.9, decimals: 1, suffix: " pts", label: "Text-to-SQL gain from SFT + DPO" },
   { kind: "text", value: "Best Outgoing", label: "Student of the department" },
 ];
 
@@ -233,11 +233,11 @@ export const projects: Project[] = [
     title: "Text-to-SQL Post-Training: SFT + DPO",
     dates: "Nov 2026 – Present",
     blurb:
-      "A post-training pipeline that teaches a small open model to write SQL with LoRA SFT, then trains it further with DPO on preference pairs checked by actually running the queries.",
+      "LoRA SFT plus DPO on preference pairs checked by actually running the queries took a 0.5B model from 45.5% to 61.3% execution accuracy on Spider dev.",
     points: [
       "Built an end-to-end post-training pipeline for Qwen2.5-Coder-0.5B-Instruct on the Spider text-to-SQL benchmark: LoRA SFT with Hugging Face TRL, then DPO on preference pairs mined from the model's own outputs.",
-      "Generated execution-verified preference data: the SFT model samples 8 queries per held-out question, each runs in a read-only SQLite sandbox, and correct vs. incorrect results become chosen / rejected pairs (gold SQL as the fallback).",
-      "Built an execution-accuracy evaluation harness with per-query-type breakdowns, and designed ablations on data size, SFT vs. SFT + DPO, and a control that spends the DPO questions on extra SFT instead.",
+      "Generated 1,878 execution-verified preference pairs: the SFT model sampled 8 queries for each of 2,000 held-out questions, each ran in a read-only SQLite sandbox, and correct vs. incorrect results became chosen / rejected pairs.",
+      "Raised execution accuracy on 1,034 Spider dev questions from 45.5% (base) to 58.3% with SFT and 61.3% with SFT + DPO, cutting failing SQL from 37.6% to 16.5%. A control that spent the DPO questions on extra SFT reached 59.4%.",
     ],
     stack: ["PyTorch", "Hugging Face TRL", "PEFT / LoRA", "Transformers", "Qwen2.5-Coder", "SQLite"],
     flowLabel: "How the training loop runs",

@@ -42,12 +42,13 @@ const PAIR = {
   rejected: "SELECT count(name) FROM singer WHERE age >= 30",
 };
 
+// Measured execution accuracy on all 1,034 Spider dev questions (one run, Kaggle T4).
 const RUNS = [
-  { name: "Base", note: "no training" },
-  { name: "SFT 25%", note: "data-size ablation" },
-  { name: "SFT", note: "full SFT split" },
-  { name: "SFT + DPO", note: "execution-verified pairs" },
-  { name: "SFT, all data", note: "control for DPO" },
+  { name: "Base", note: "no training", acc: 45.5 },
+  { name: "SFT 25%", note: "data-size ablation", acc: 56.0 },
+  { name: "SFT", note: "full SFT split", acc: 58.3 },
+  { name: "SFT, all data", note: "control for DPO", acc: 59.4 },
+  { name: "SFT + DPO", note: "execution-verified pairs", acc: 61.3, best: true },
 ];
 
 /** The SFT -> execution-verified DPO loop as a stepped diagram, plus the experiment grid. */
@@ -155,12 +156,29 @@ export function PostTrainingPipeline() {
       </div>
 
       <div className="border-t border-line p-4 sm:p-5">
-        <p className="font-mono text-[11px] tracking-[0.18em] text-muted uppercase">Experiments</p>
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <p className="font-mono text-[11px] tracking-[0.18em] text-muted uppercase">Results</p>
+          <p className="font-mono text-[10px] text-muted">execution accuracy · Spider dev · 1,034 questions</p>
+        </div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
           {RUNS.map((r) => (
-            <div key={r.name} className="rounded-xl border border-line bg-white/[0.02] px-3 py-2.5">
-              <p className="text-sm text-fg">{r.name}</p>
+            <div
+              key={r.name}
+              className={`rounded-xl border px-3 py-2.5 ${
+                r.best ? "border-accent-2/50 bg-accent/15" : "border-line bg-white/[0.02]"
+              }`}
+            >
+              <p className={`font-display text-xl font-semibold tracking-tight ${r.best ? "text-accent-2" : "text-fg"}`}>
+                {r.acc.toFixed(1)}%
+              </p>
+              <p className="mt-1 text-sm text-fg/85">{r.name}</p>
               <p className="mt-0.5 text-[11px] leading-snug text-muted">{r.note}</p>
+              <div className="mt-2 h-1 rounded-full bg-white/10" aria-hidden="true">
+                <div
+                  className={`h-1 rounded-full ${r.best ? "bg-accent-2" : "bg-accent/70"}`}
+                  style={{ width: `${r.acc}%` }}
+                />
+              </div>
             </div>
           ))}
         </div>
